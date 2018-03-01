@@ -55,12 +55,55 @@ def line_line_intersect(line1, line2):
     return dot_product(line2[0], line1[0], line2[1]) < 0
   if cross(line2[0], line2[1], line1[1]) == 0:
     return dot_product(line2[0], line1[1], line2[1]) < 0
+
   return True
+
+def get_standard_form(line)
+  point1, point2 = line
+  A = point2[1] - point1[1]
+  B = -1 * (point2[0] - point1[0])
+  C = A * point1[0] + B * point1[1]
+  return (A,B,C)
 
 def find_intersection(line1, line2):
   if line_line_intersect(line1, line2):
+    A_1, B_1, C_1 = get_standard_form(line1)
+    A_2, B_2, C_2 = get_standard_form(line2)
+
     # cramer's rule
-    A_1 = 
-    return det(
-  return None
+    det = A_1 * B_2 - A_2 * B_1
+    if det == 0:
+      return None
+    else:
+      return (float(C_1 * B_2 - B_1 * C_2) / det, float(A_1 * C_2 - C_1 * A_2) / det)
+  else:
+    return None
+
+# return a center point and radius, so (tuple, float)
+def circle(point1, point2, point3):
+  A_1, B_1, _ = get_standard_form((point1, point2))
+  mid_x_1, mid_y_1 = (float(point2[0] + point1[0]) / 2, \
+       float(point2[1] + point1[1]) / 2)
+
+  orthog_line_1 = (-1 * B_1, A_1)
+
+  D_1 = orthog_line_1[0] * mid_x_1 + orthog_line_1[1] * mid_y_1
+
+  A_2, B_2, _ = get_standard_form((point2, point3))
+
+  mid_x_2, mid_y_2 = (float(point2[0] + point3[0]) / 2, \
+       float(point2[1] + point3[1]) / 2)
+
+  orthog_line_2 = (-1 * B_2, A_2)
+
+  D_2 = orthog_line_2[0] * mid_x_2 + orthog_line_2[1] * mid_y_2
+
+  # we now have two lines. -B_1x + A_1y = D, -B_2x + A_2y = D
+  det = orthog_line_1[0] * orthog_line_2[1] - orthog_line_2[0] * orthog_line_1[1]
+  center_x = float(D_1 * orthog_line_2[1] - D_2 * orthog_line_1[1]) / det
+  center_y = float(orthog_line_1[0] * D_2 - orthog_line_2[0] * D_1) / det
+  center = (center_x, center_y)
+
+  return (center, dist(center, (mid_x_1, mid_y_1)))
+
 
