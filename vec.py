@@ -58,6 +58,9 @@ def line_line_intersect(line1, line2):
 
   return True
 
+# returns A,B,C, where Ax + By = C
+# There are an infinite number of solutions. The idea is that -B/A = the slope, so we let B be y_1 - y_2
+# and let A = x_2 - x_1. Then we plug in a point and get C.
 def get_standard_form(line)
   point1, point2 = line
   A = point2[1] - point1[1]
@@ -106,4 +109,42 @@ def circle(point1, point2, point3):
 
   return (center, dist(center, (mid_x_1, mid_y_1)))
 
+def reflect(line, point):
+  A, B, C = get_standard_form(line)
 
+  orthog_line = (-1 * B, A)
+  orthog_d = dot(orthog_line, point)
+  A_2, B_2, C_2 = orthog_line[0], orthog_line[1], orthog_d
+
+  det = A_1 * B_2 - A_2 * B_1
+  Y = (float(C_1 * B_2 - B_1 * C_2) / det, float(A_1 * C_2 - C_1 * A_2) / det)
+
+  # return  X + (Y - X) + (Y - X) = Y + (Y -X )
+
+  return (2 * Y[0] - point[0], 2 * Y[1] - point[1])
+
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+def ccw(A, B, C):
+    return (B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y) > 0
+
+def jarvis(points):
+    leftmost = points[0]
+    results = []
+    for i in points:
+        if i.x < leftmost.x:
+            leftmost = i
+    pointOnHull = i
+    while True:
+        results.append(pointOnHull)
+        candidate = points[0]
+        for j in range(1, len(points)):
+            if ccw(pointOnHull, candidate, points[j]):
+                candidate = points[j]
+        pointOnHull = candidate
+        if pointOnHull == results[0]:
+            return results
