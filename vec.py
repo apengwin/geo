@@ -124,19 +124,15 @@ def reflect(line, point):
   return (2 * Y[0] - point[0], 2 * Y[1] - point[1])
 
 
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+def ccw(A,B,C)
+  return cross(A,B,C) > 0
 
-def ccw(A, B, C):
-    return (B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y) > 0
-
+#convex hull
 def jarvis(points):
     leftmost = points[0]
     results = []
     for i in points:
-        if i.x < leftmost.x:
+        if i[0] < leftmost[0]:
             leftmost = i
     pointOnHull = i
     while True:
